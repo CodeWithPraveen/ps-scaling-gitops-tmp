@@ -1,0 +1,23 @@
+# Frontend Service - Deploys last (sync-wave: 3)
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: globomantics-frontend
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "3"
+  finalizers:
+  - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/CodeWithPraveen/ps-scaling-gitops
+    path: applications/ecommerce/services/frontend
+    targetRevision: HEAD
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: globomantics
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

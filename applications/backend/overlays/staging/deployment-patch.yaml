@@ -1,0 +1,14 @@
+# Staging environment patches
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-api
+spec:
+  replicas: 2
+  template:
+    spec:
+      containers:
+      - name: api
+        env:
+        - name: LOG_LEVEL
+          value: "info"

@@ -1,0 +1,8 @@
+# Development namespace
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: globomantics-dev
+  labels:
+    env: development
+    team: backend

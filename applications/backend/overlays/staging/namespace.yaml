@@ -1,0 +1,8 @@
+# Staging namespace
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: globomantics-staging
+  labels:
+    env: staging
+    team: backend

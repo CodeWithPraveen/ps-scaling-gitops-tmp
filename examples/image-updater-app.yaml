@@ -1,0 +1,27 @@
+# ArgoCD Application with Image Updater annotations
+# Automatically updates image tags based on semver
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: backend-api
+  namespace: argocd
+  annotations:
+    # Image updater configuration
+    argocd-image-updater.argoproj.io/image-list: backend=globomantics/backend-api
+    argocd-image-updater.argoproj.io/backend.update-strategy: semver
+    argocd-image-updater.argoproj.io/backend.allow-tags: regexp:^v[0-9]+\.[0-9]+\.[0-9]+$
+    argocd-image-updater.argoproj.io/write-back-method: git
+    argocd-image-updater.argoproj.io/git-branch: main
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/CodeWithPraveen/ps-scaling-gitops
+    targetRevision: HEAD
+    path: applications/backend/overlays/production
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: globomantics
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

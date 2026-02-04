@@ -1,0 +1,21 @@
+# Production environment patches
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-api
+spec:
+  replicas: 4
+  template:
+    spec:
+      containers:
+      - name: api
+        env:
+        - name: LOG_LEVEL
+          value: "warn"
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "500m"
+          limits:
+            memory: "1Gi"
+            cpu: "1"

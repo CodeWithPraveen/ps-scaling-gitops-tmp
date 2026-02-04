@@ -1,0 +1,30 @@
+# Test: Non-Compliant Deployment
+# This deployment should be blocked by Kyverno policies
+# Issues:
+# - Missing resource limits
+# - Using unauthorized registry
+# - No health probes
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: test-noncompliant-app
+  namespace: default
+  labels:
+    app: test-noncompliant
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: test-noncompliant
+  template:
+    metadata:
+      labels:
+        app: test-noncompliant
+    spec:
+      containers:
+      - name: app
+        image: docker.io/nginx:latest  # Unauthorized registry
+        ports:
+        - containerPort: 80
+        # Missing resources - will be blocked
+        # Missing health probes - will be audited

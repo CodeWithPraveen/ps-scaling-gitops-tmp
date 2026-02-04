@@ -1,0 +1,80 @@
+# Kubernetes RBAC for Backend Team Namespace Isolation
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: backend-prod
+  labels:
+    team: backend
+    env: production
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: backend-staging
+  labels:
+    team: backend
+    env: staging
+---
+# Role for ArgoCD to deploy in backend namespaces
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: backend-deployer
+  namespace: backend-prod
+rules:
+- apiGroups: [""]
+  resources: ["configmaps", "secrets", "services", "serviceaccounts", "persistentvolumeclaims"]
+  verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+- apiGroups: ["apps"]
+  resources: ["deployments", "statefulsets", "replicasets"]
+  verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+- apiGroups: ["batch"]
+  resources: ["jobs", "cronjobs"]
+  verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+- apiGroups: ["networking.k8s.io"]
+  resources: ["ingresses", "networkpolicies"]
+  verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+---
+# Bind ArgoCD service account to the role
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: argocd-backend-deployer
+  namespace: backend-prod
+subjects:
+- kind: ServiceAccount
+  name: argocd-application-controller
+  namespace: argocd
+roleRef:
+  kind: Role
+  name: backend-deployer
+  apiGroup: rbac.authorization.k8s.io
+---
+# Read-only role for developers
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: backend-viewer
+  namespace: backend-prod
+rules:
+- apiGroups: ["", "apps", "batch", "networking.k8s.io"]
+  resources: ["*"]
+  verbs: ["get", "list", "watch"]
+- apiGroups: [""]
+  resources: ["pods/log"]
+  verbs: ["get"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: backend-developers-viewer
+  namespace: backend-prod
+subjects:
+- kind: Group
+  name: backend-developers
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: backend-viewer
+  apiGroup: rbac.authorization.k8s.io

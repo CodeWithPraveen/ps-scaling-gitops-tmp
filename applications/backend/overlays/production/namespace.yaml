@@ -1,0 +1,8 @@
+# Production namespace
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: globomantics-prod
+  labels:
+    env: production
+    team: backend

@@ -1,0 +1,74 @@
+# ArgoCD Project for Backend Team
+# Implements tenant isolation with restricted access
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: team-backend
+  namespace: argocd
+spec:
+  description: Backend team project with restricted access
+  
+  # Allowed source repositories
+  sourceRepos:
+  - https://github.com/globomantics/backend-*
+  - https://github.com/globomantics/shared-configs
+  
+  # Allowed destination clusters and namespaces
+  destinations:
+  - namespace: backend-*
+    server: https://kubernetes.default.svc
+  - namespace: backend-*
+    server: https://prod.k8s.globomantics.com
+  
+  # Deny all cluster-scoped resources
+  clusterResourceWhitelist: []
+  
+  # Allow only specific namespace-scoped resources
+  namespaceResourceWhitelist:
+  - group: ''
+    kind: ConfigMap
+  - group: ''
+    kind: Secret
+  - group: ''
+    kind: Service
+  - group: ''
+    kind: ServiceAccount
+  - group: apps
+    kind: Deployment
+  - group: apps
+    kind: StatefulSet
+  - group: apps
+    kind: ReplicaSet
+  - group: batch
+    kind: Job
+  - group: batch
+    kind: CronJob
+  - group: networking.k8s.io
+    kind: Ingress
+  - group: networking.k8s.io
+    kind: NetworkPolicy
+  
+  # Deny dangerous resources
+  namespaceResourceBlacklist:
+  - group: ''
+    kind: ResourceQuota
+  - group: ''
+    kind: LimitRange
+  
+  # Roles for team members
+  roles:
+  - name: developer
+    description: Developer read and sync access
+    policies:
+    - p, proj:team-backend:developer, applications, get, team-backend/*, allow
+    - p, proj:team-backend:developer, applications, sync, team-backend/*, allow
+    - p, proj:team-backend:developer, logs, get, team-backend/*, allow
+    groups:
+    - backend-developers
+  - name: admin
+    description: Full admin access for team leads
+    policies:
+    - p, proj:team-backend:admin, applications, *, team-backend/*, allow
+    - p, proj:team-backend:admin, repositories, *, team-backend/*, allow
+    groups:
+    - backend-admins

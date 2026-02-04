@@ -1,0 +1,38 @@
+# Kyverno Policy: Audit Best Practices
+# Reports on resources that don't follow best practices (audit mode)
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: audit-best-practices
+  annotations:
+    policies.kyverno.io/title: Audit Best Practices
+    policies.kyverno.io/category: Best Practices
+    policies.kyverno.io/severity: low
+    policies.kyverno.io/description: >-
+      Audits deployments for best practices like health probes.
+      Reports violations but does not block deployments.
+spec:
+  validationFailureAction: Audit
+  background: true
+  rules:
+  - name: check-probes
+    match:
+      any:
+      - resources:
+          kinds:
+          - Deployment
+    validate:
+      message: "Liveness and readiness probes should be configured for production readiness"
+      pattern:
+        spec:
+          template:
+            spec:
+              containers:
+              - livenessProbe:
+                  httpGet:
+                    path: "?*"
+                    port: "?*"
+                readinessProbe:
+                  httpGet:
+                    path: "?*"
+                    port: "?*"
