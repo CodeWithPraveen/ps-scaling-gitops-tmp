@@ -8,8 +8,8 @@ resources:
 
 # Image versioning with semantic versions
 images:
-- name: ghcr.io/globomantics/backend-api
-  newTag: v2.1.0
+- name: nginx
+  newTag: 1.29.0
 
 commonLabels:
   app.kubernetes.io/managed-by: argocd

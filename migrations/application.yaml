@@ -7,7 +7,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/CodeWithPraveen/ps-scaling-gitops
+    repoURL: https://github.com/CodeWithPraveen/ps-scaling-gitops-tmp
     path: migrations
     targetRevision: HEAD
   destination:

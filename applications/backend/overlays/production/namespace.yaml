@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: globomantics-prod
+  name: globomantics-production
   labels:
     env: production
     team: backend

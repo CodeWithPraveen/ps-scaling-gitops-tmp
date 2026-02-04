@@ -15,7 +15,7 @@ echo ""
 # Step 2: Install ArgoCD
 echo "Step 2: Installing ArgoCD in management cluster..."
 kubectl create namespace argocd
-kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+kubectl apply --server-side=true -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
 echo "✓ ArgoCD installation initiated"
 echo ""
 

@@ -11,7 +11,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/CodeWithPraveen/ps-scaling-gitops
+    repoURL: https://github.com/CodeWithPraveen/ps-scaling-gitops-tmp
     path: applications/ecommerce/services/frontend
     targetRevision: HEAD
   destination:
