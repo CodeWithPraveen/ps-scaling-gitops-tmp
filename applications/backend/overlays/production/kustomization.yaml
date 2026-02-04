@@ -10,6 +10,6 @@ resources:
 
 patches:
 - path: deployment-patch.yaml
-
 commonLabels:
   env: production
+

@@ -1,17 +1,11 @@
-# Backend API Deployment
-# Enterprise-ready with versioning, probes, and resource limits
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: backend-api
   labels:
     app: backend-api
-    app.kubernetes.io/name: backend-api
-    app.kubernetes.io/component: api
-  annotations:
-    app.kubernetes.io/version: "v2.1.0"
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
       app: backend-api
@@ -19,41 +13,9 @@ spec:
     metadata:
       labels:
         app: backend-api
-        version: v2.1.0
     spec:
       containers:
       - name: api
         image: nginx:latest
         ports:
         - containerPort: 8080
-          name: http
-        resources:
-          requests:
-            memory: "256Mi"
-            cpu: "250m"
-          limits:
-            memory: "512Mi"
-            cpu: "500m"
-        securityContext:
-          privileged: false
-          #runAsNonRoot: true
-          readOnlyRootFilesystem: true
-        # livenessProbe:
-        #   httpGet:
-        #     path: /health
-        #     port: 8080
-        #   initialDelaySeconds: 10
-        #   periodSeconds: 10
-        # readinessProbe:
-        #   httpGet:
-        #     path: /ready
-        #     port: 8080
-        #   initialDelaySeconds: 5
-        #   periodSeconds: 5
-        env:
-        - name: LOG_LEVEL
-          value: "info"
-        - name: APP_ENV
-          valueFrom:
-            fieldRef:
-              fieldPath: metadata.labels['env']
