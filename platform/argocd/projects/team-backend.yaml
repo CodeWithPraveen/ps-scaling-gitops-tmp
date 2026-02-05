@@ -10,7 +10,7 @@ spec:
   
   # Allowed source repositories
   sourceRepos:
-  - https://github.com/CodeWithPraveen/ps-scaling-gitops
+  - https://github.com/CodeWithPraveen/ps-scaling-gitops-tmp
   
   # Allowed destination clusters and namespaces
   # Matches the namespaces created by the ApplicationSet (globomantics-*)
