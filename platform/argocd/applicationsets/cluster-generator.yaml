@@ -15,7 +15,7 @@ spec:
         app.kubernetes.io/name: 'globomantics-backend-{{name}}'
         app.kubernetes.io/instance: '{{name}}'
     spec:
-      project: default
+      project: team-backend
       source:
         repoURL: https://github.com/CodeWithPraveen/ps-scaling-gitops-tmp
         targetRevision: HEAD
