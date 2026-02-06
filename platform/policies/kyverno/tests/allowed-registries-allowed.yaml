@@ -1,0 +1,21 @@
+# Test Case: ALLOWED - Images from approved Globomantics registries
+# Policy: allowed-registries
+# Expected Result: Pod creation succeeds
+apiVersion: v1
+kind: Pod
+metadata:
+  name: approved-registry-ghcr
+  namespace: default
+  labels:
+    app: test-app
+    test-case: allowed
+spec:
+  containers:
+  - name: backend-api
+    image: ghcr.io/globomantics/backend-api:v1.2.3
+    ports:
+    - containerPort: 8080
+  initContainers:
+  - name: db-migration
+    image: ghcr.io/globomantics/migrations:latest
+    command: ["sh", "-c", "echo 'Running migrations'"]

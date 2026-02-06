@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wrong-team
+  namespace: globomantics-development
+  labels:
+    team: team-ecommerce  # Wrong team!
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: wrong-team
+  template:
+    metadata:
+      labels:
+        app: wrong-team
+    spec:
+      containers:
+      - name: api
+        image: nginx:latest

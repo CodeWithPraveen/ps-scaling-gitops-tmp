@@ -1,7 +1,7 @@
 # Kyverno Policy: Audit Best Practices
 # Reports on resources that don't follow best practices (audit mode)
-apiVersion: kyverno.io/v1
-kind: ClusterPolicy
+apiVersion: policies.kyverno.io/v1
+kind: ValidatingPolicy
 metadata:
   name: audit-best-practices
   annotations:
@@ -12,27 +12,24 @@ metadata:
       Audits deployments for best practices like health probes.
       Reports violations but does not block deployments.
 spec:
-  validationFailureAction: Audit
-  background: true
-  rules:
-  - name: check-probes
-    match:
-      any:
-      - resources:
-          kinds:
-          - Deployment
-    validate:
-      message: "Liveness and readiness probes should be configured for production readiness"
-      pattern:
-        spec:
-          template:
-            spec:
-              containers:
-              - livenessProbe:
-                  httpGet:
-                    path: "?*"
-                    port: "?*"
-                readinessProbe:
-                  httpGet:
-                    path: "?*"
-                    port: "?*"
+  validationActions:
+  - Audit
+  matchConstraints:
+    resourceRules:
+    - apiGroups: ['apps']
+      apiVersions: ['v1']
+      operations: [CREATE, UPDATE]
+      resources: [deployments]
+  validations:
+  - expression: >-
+      object.spec.template.spec.containers.all(container,
+        has(container.livenessProbe) &&
+        has(container.livenessProbe.httpGet) &&
+        has(container.livenessProbe.httpGet.path) &&
+        has(container.livenessProbe.httpGet.port) &&
+        has(container.readinessProbe) &&
+        has(container.readinessProbe.httpGet) &&
+        has(container.readinessProbe.httpGet.path) &&
+        has(container.readinessProbe.httpGet.port)
+      )
+    message: "Liveness and readiness probes should be configured for production readiness"

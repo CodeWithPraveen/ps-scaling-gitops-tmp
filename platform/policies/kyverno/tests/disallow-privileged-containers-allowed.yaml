@@ -1,0 +1,32 @@
+# Test Case: ALLOWED - Non-privileged containers in production
+# Policy: disallow-privileged-containers
+# Expected Result: Pod creation succeeds in production namespace
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: production
+  labels:
+    env: production
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: non-privileged-app
+  namespace: production
+  labels:
+    app: backend-api
+    test-case: allowed
+spec:
+  containers:
+  - name: api-server
+    image: ghcr.io/globomantics/backend-api:v1.2.3
+    ports:
+    - containerPort: 8080
+    securityContext:
+      privileged: false
+      runAsNonRoot: true
+      runAsUser: 1000
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+        - ALL

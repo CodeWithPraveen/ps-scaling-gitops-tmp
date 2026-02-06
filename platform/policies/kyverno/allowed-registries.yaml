@@ -1,7 +1,7 @@
 # Kyverno Policy: Allowed Image Registries
 # Restricts container images to approved registries only
-apiVersion: kyverno.io/v1
-kind: ClusterPolicy
+apiVersion: policies.kyverno.io/v1
+kind: ValidatingPolicy
 metadata:
   name: allowed-registries
   annotations:
@@ -12,20 +12,18 @@ metadata:
       Container images must come from approved registries to ensure
       security and compliance requirements are met.
 spec:
-  validationFailureAction: Enforce
-  background: true
-  rules:
-  - name: validate-registries
-    match:
-      any:
-      - resources:
-          kinds:
-          - Pod
-    validate:
-      message: "Images must be from approved registries: ghcr.io/globomantics or globomantics.azurecr.io"
-      pattern:
-        spec:
-          containers:
-          - image: "ghcr.io/globomantics/* | globomantics.azurecr.io/*"
-          =(initContainers):
-          - image: "ghcr.io/globomantics/* | globomantics.azurecr.io/*"
+  validationActions:
+  - Deny
+  matchConstraints:
+    resourceRules:
+    - apiGroups: ['']
+      apiVersions: ['v1']
+      operations: [CREATE, UPDATE]
+      resources: [pods]
+  validations:
+  - expression: >-
+      (object.spec.containers + object.spec.?initContainers.orValue([]) + object.spec.?ephemeralContainers.orValue([])).all(container,
+        container.image.startsWith('ghcr.io/globomantics/') ||
+        container.image.startsWith('globomantics.azurecr.io/')
+      )
+    message: "Images must be from approved registries: ghcr.io/globomantics or globomantics.azurecr.io"

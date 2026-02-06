@@ -1,0 +1,33 @@
+# Kyverno Policy: Disallow Privileged Containers
+# Prevents containers from running in privileged mode
+apiVersion: policies.kyverno.io/v1
+kind: ValidatingPolicy
+metadata:
+  name: disallow-privileged-containers
+  annotations:
+    policies.kyverno.io/title: Disallow Privileged Containers
+    policies.kyverno.io/category: Pod Security
+    policies.kyverno.io/severity: high
+    policies.kyverno.io/description: >-
+      Privileged containers have full access to the host and should not be
+      allowed in production namespaces.
+spec:
+  validationActions:
+  - Deny
+  matchConstraints:
+    resourceRules:
+    - apiGroups: ['']
+      apiVersions: ['v1']
+      operations: [CREATE, UPDATE]
+      resources: [pods]
+    namespaceSelector:
+      matchLabels:
+        env: production
+  validations:
+  - expression: >-
+      (object.spec.containers + object.spec.?initContainers.orValue([])).all(container,
+        !has(container.securityContext) ||
+        !has(container.securityContext.privileged) ||
+        container.securityContext.privileged == false
+      )
+    message: "Privileged containers are not allowed in production namespaces"

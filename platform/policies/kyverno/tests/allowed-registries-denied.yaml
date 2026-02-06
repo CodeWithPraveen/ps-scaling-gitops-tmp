@@ -1,0 +1,17 @@
+# Test Case: DENIED - Images from unapproved registries
+# Policy: allowed-registries
+# Expected Result: Pod creation blocked with error message
+apiVersion: v1
+kind: Pod
+metadata:
+  name: denied-registry-dockerhub
+  namespace: default
+  labels:
+    app: test-app
+    test-case: denied
+spec:
+  containers:
+  - name: nginx
+    image: nginx:latest
+    ports:
+    - containerPort: 80

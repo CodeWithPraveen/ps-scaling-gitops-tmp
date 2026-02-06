@@ -1,0 +1,16 @@
+# platform/argocd/projects/platform-admin.yaml
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: platform-admin
+  namespace: argocd
+spec:
+  description: Platform admin project for cluster-scoped resources
+  sourceRepos:
+  - https://github.com/CodeWithPraveen/ps-scaling-gitops-tmp
+  destinations:
+  - namespace: '*'
+    server: '*'
+  clusterResourceWhitelist:
+  - group: ''
+    kind: Namespace  # Only platform admins can create namespaces

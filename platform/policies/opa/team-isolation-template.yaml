@@ -1,0 +1,29 @@
+apiVersion: templates.gatekeeper.sh/v1
+kind: ConstraintTemplate
+metadata:
+  name: teamisolation                     # Template name
+spec:
+  crd:
+    spec:
+      names:
+        kind: TeamIsolation              # Creates new CRD "TeamIsolation"
+      validation:
+        openAPIV3Schema:
+          type: object
+          properties:
+            allowedTeams:                    # Parameters for the policy
+              type: array
+              items:
+                type: string
+  targets:                                  # Targets for the policy
+    - target: admission.k8s.gatekeeper.sh
+      rego: |
+        package globomantics.admission       # Policy logic in Rego
+
+        # Violation: Team not in allowed list
+        violation[{"msg": msg}] {
+          provided_team := input.review.object.metadata.labels.team
+          allowed_teams := {team | team := input.parameters.allowedTeams[_]}
+          not allowed_teams[provided_team]
+          msg := sprintf("Team '%v' not allowed: %v", [provided_team, input.parameters.allowedTeams])
+        }

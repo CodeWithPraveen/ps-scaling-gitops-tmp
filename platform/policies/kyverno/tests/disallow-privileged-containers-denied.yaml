@@ -1,0 +1,25 @@
+# Test Case: DENIED - Privileged container in production namespace
+# Policy: disallow-privileged-containers
+# Expected Result: Pod creation blocked in production namespace
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: production
+  labels:
+    env: production
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: privileged-container-prod
+  namespace: production
+  labels:
+    app: system-monitor
+    test-case: denied
+spec:
+  containers:
+  - name: monitor
+    image: ghcr.io/globomantics/system-monitor:v1.0.0
+    securityContext:
+      privileged: true
+  # Privileged container in production - will be blocked
