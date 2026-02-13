@@ -1,0 +1,13 @@
+# GitOps overlay: includes upstream ArgoCD HA install and scales repo-server and server to 3 replicas.
+# Single command deploys everything: kubectl apply -k platform/argocd/ha/
+# The kustomization references the upstream HA manifest as base and applies scaling patches.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: argocd
+
+resources:
+  - https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/ha/install.yaml
+
+patches:
+  - path: patches/repo-server.yaml
+  - path: patches/server.yaml

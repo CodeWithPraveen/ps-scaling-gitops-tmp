@@ -1,21 +1,12 @@
-# ArgoCD ConfigMap for HA configuration
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: argocd-cmd-params-cm
-  namespace: argocd
 data:
-  # Controller sharding configuration
   controller.sharding.algorithm: round-robin
   controller.replicas: "3"
-  
-  # Repo server optimization
   reposerver.parallelism.limit: "10"
-  
-  # Application controller optimization
   controller.operation.processors: "20"
   controller.status.processors: "50"
   controller.self.heal.timeout.seconds: "5"
-  
-  # Redis configuration for HA
   redis.server: argocd-redis-ha-haproxy:6379

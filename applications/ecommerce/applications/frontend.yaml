@@ -15,8 +15,8 @@ spec:
     path: applications/ecommerce/services/frontend
     targetRevision: HEAD
   destination:
-    server: https://kubernetes.default.svc
-    namespace: globomantics
+    name: staging
+    namespace: globomantics-staging
   syncPolicy:
     automated:
       prune: true

@@ -1,0 +1,31 @@
+# ApplicationSet using cluster generator
+# Automatically targets all clusters with matching labels
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: globomantics-backend-appset
+  namespace: argocd
+spec:
+  generators:
+  - clusters: {}
+  template:
+    metadata:
+      name: 'globomantics-backend-{{name}}'
+      labels:
+        app.kubernetes.io/name: 'globomantics-backend-{{name}}'
+        app.kubernetes.io/instance: '{{name}}'
+    spec:
+      project: team-backend
+      source:
+        repoURL: https://github.com/CodeWithPraveen/ps-scaling-gitops-tmp
+        targetRevision: HEAD
+        path: applications/backend/overlays/{{metadata.labels.env}}
+      destination:
+        server: '{{server}}'
+        namespace: 'globomantics-{{name}}'
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+        - CreateNamespace=true

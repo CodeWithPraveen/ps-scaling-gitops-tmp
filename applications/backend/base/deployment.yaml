@@ -1,11 +1,13 @@
+# Deployment with versioning annotations
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: backend-api
-  labels:
-    app: backend-api
+  annotations:
+    app.kubernetes.io/version: "v2.1.0"
+    git.commit/sha: "4e1f9b7a428c61c7e8c90412aefad93e75952cea"
 spec:
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
       app: backend-api
@@ -16,6 +18,13 @@ spec:
     spec:
       containers:
       - name: api
-        image: nginx:latest
+        image: globomantics/backend-api:v2.1.0
         ports:
         - containerPort: 8080
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"

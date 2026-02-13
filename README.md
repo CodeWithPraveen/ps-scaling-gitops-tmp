@@ -5,7 +5,7 @@ This repository demonstrates enterprise GitOps patterns with ArgoCD and Kubernet
 ## Repository Structure
 
 ```
-ps-scaling-gitops-tmp/
+ps-scaling-gitops/
 ├── platform/                    # Platform team owned resources
 │   ├── argocd/
 │   │   ├── applicationsets/     # Multi-cluster deployment patterns

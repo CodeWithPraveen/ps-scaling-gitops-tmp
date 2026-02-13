@@ -1,3 +1,4 @@
+# Service for the backend API
 apiVersion: v1
 kind: Service
 metadata:
@@ -8,3 +9,4 @@ spec:
   ports:
   - port: 80
     targetPort: 8080
+  type: ClusterIP
