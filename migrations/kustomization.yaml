@@ -1,0 +1,17 @@
+# Kustomization for Database Migrations Demo
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: globomantics-staging
+
+commonLabels:
+  demo: migrations
+  app.kubernetes.io/managed-by: argocd
+
+resources:
+  - db-secret.yaml
+  - postgres.yaml
+  - postgres-service.yaml
+  - migration-configmap.yaml
+  - migration-job.yaml
+  - deployment.yaml

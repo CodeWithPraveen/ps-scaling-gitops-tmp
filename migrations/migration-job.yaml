@@ -19,7 +19,7 @@ spec:
       restartPolicy: Never
       containers:
       - name: migrate
-        image: ghcr.io/globomantics/db-migrations:v2.0.0
+        image: flyway/flyway:10-alpine
         command: ["flyway", "migrate"]
         env:
         - name: FLYWAY_URL
@@ -41,6 +41,10 @@ spec:
           value: "true"
         - name: FLYWAY_LOCATIONS
           value: "filesystem:/flyway/sql"
+        volumeMounts:
+        - name: migration-sql
+          mountPath: /flyway/sql
+          readOnly: true
         resources:
           requests:
             memory: "256Mi"
@@ -48,3 +52,7 @@ spec:
           limits:
             memory: "512Mi"
             cpu: "500m"
+      volumes:
+      - name: migration-sql
+        configMap:
+          name: migration-sql
