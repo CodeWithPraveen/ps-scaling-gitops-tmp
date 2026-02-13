@@ -1,0 +1,28 @@
+# ArgoCD Application for Backend with Migrations
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: backend-with-migrations
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/CodeWithPraveen/ps-scaling-gitops-tmp
+    path: migrations
+    targetRevision: HEAD
+  destination:
+    name: staging
+    namespace: globomantics-staging
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: false  # Don't auto-sync to prevent re-running migrations
+    syncOptions:
+    - CreateNamespace=true
+    - RespectIgnoreDifferences=true
+    retry:
+      limit: 3
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 3m

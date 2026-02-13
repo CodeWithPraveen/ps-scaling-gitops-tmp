@@ -1,13 +1,11 @@
 # Database Migration Job
-# Runs before application deployment using sync-wave: -1
+# Runs after database is ready (wave 2) and before application deployment (wave 3)
 apiVersion: batch/v1
 kind: Job
 metadata:
   name: db-migration-v2
   annotations:
-    argocd.argoproj.io/sync-wave: "-1"
-    argocd.argoproj.io/hook: PreSync
-    argocd.argoproj.io/hook-delete-policy: BeforeHookCreation
+    argocd.argoproj.io/sync-wave: "2"
 spec:
   backoffLimit: 3
   ttlSecondsAfterFinished: 3600
